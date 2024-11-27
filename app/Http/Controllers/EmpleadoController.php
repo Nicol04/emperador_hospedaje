@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Auth;
 
 class EmpleadoController extends Controller
 {
+    /**
+     * Muestra la lista de empleados.
+     */
     public function index(Request $request)
     {
         //$empleados = Empleado::all();
@@ -30,6 +33,12 @@ class EmpleadoController extends Controller
 
         return $edad;
     }
+    
+    /**
+     * Almacena un nuevo empleado y usuario en la base de datos.
+     * Valida los datos del formulario antes de proceder.
+     */
+    
     public function store(Request $request)
     {
         // Validación de datos
@@ -75,6 +84,8 @@ class EmpleadoController extends Controller
             'password' => Hash::make($request->password),
             'estado' => 'Activo',
         ]);
+
+        // Cargar foto
         $rutaFoto = $request->file('foto') ? $request->file('foto')->store('fotos', 'public') : '';
 
         // Crear Empleado
@@ -94,6 +105,10 @@ class EmpleadoController extends Controller
             ->with('icono', 'success');
     }
 
+     /**
+     * Muestra la información de un usuario y su empleado asociado.
+     */    
+
     public function show($id)
     {
         $usuario = Usuario::with('empleado')->findOrFail($id);
@@ -104,6 +119,11 @@ class EmpleadoController extends Controller
 
     public function search(Request $request) {}
 
+
+    /**
+     * Edita la información de un usuario y su empleado asociado.
+     */
+    
     public function edit($id)
     {
         $usuario = Usuario::with('empleado')->findOrFail($id);
