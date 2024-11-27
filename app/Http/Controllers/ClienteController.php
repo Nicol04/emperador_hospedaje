@@ -2,63 +2,114 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ClienteRequest;
+use App\Models\Cliente;
 use Illuminate\Http\Request;
 
 class ClienteController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Muestra una lista de clientes con funcionalidad de búsqueda y ordenación.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        // Capturar parámetros de búsqueda y ordenación
+        $search = $request->get('search', '');
+        $sortBy = $request->get('sortBy', 'idCliente');
+        $sortDirection = $request->get('sortDirection', 'asc');
+
+        // Validar los parámetros de ordenación
+        if (!in_array($sortBy, ['idCliente', 'dni', 'nombre', 'apellido', 'correo', 'telefono'])) {
+            $sortBy = 'idCliente';
+        }
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'asc';
+        }
+
+        // Consultar clientes con filtros aplicados
+        $clientes = Cliente::query()
+            ->where('dni', 'like', "%{$search}%")
+            ->orWhere('nombre', 'like', "%{$search}%")
+            ->orWhere('apellido', 'like', "%{$search}%")
+            ->orWhere('correo', 'like', "%{$search}%")
+            ->orderBy($sortBy, $sortDirection)
+            ->paginate(10);
+
+        return view('clientes.index', compact('clientes', 'search', 'sortBy', 'sortDirection'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Muestra el formulario para crear un nuevo cliente.
+     *
+     * @return \Illuminate\View\View
      */
     public function create()
     {
-        //
+        return view('clientes.create');
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Almacena un nuevo cliente en la base de datos.
+     *
+     * @param ClienteRequest $request
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(ClienteRequest $request)
     {
-        //
+        Cliente::create($request->validated());
+
+        return redirect()->route('clientes.index')->with('success', 'Cliente creado con éxito.');
     }
 
     /**
-     * Display the specified resource.
+     * Muestra los detalles de un cliente específico.
+     *
+     * @param Cliente $cliente
+     * @return \Illuminate\View\View
      */
-    public function show(string $id)
+    public function show(Cliente $cliente)
     {
-        //
+        return view('clientes.show', compact('cliente'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Muestra el formulario para editar un cliente específico.
+     *
+     * @param Cliente $cliente
+     * @return \Illuminate\View\View
      */
-    public function edit(string $id)
+    public function edit(Cliente $cliente)
     {
-        //
+        return view('clientes.edit', compact('cliente'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza un cliente en la base de datos.
+     *
+     * @param ClienteRequest $request
+     * @param Cliente $cliente
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, string $id)
+    public function update(ClienteRequest $request, Cliente $cliente)
     {
-        //
+        $cliente->update($request->validated());
+
+        return redirect()->route('clientes.index')->with('success', 'Cliente actualizado con éxito.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina un cliente de la base de datos.
+     *
+     * @param Cliente $cliente
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(string $id)
+    public function destroy(Cliente $cliente)
     {
-        //
+        $cliente->delete();
+
+        return redirect()->route('clientes.index')->with('success', 'Cliente eliminado con éxito.');
     }
 }
