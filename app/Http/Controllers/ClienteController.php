@@ -10,9 +10,6 @@ class ClienteController extends Controller
 {
     /**
      * Muestra una lista de clientes con funcionalidad de búsqueda y ordenación.
-     *
-     * @param Request $request
-     * @return \Illuminate\View\View
      */
     public function index(Request $request)
     {
@@ -43,8 +40,6 @@ class ClienteController extends Controller
 
     /**
      * Muestra el formulario para crear un nuevo cliente.
-     *
-     * @return \Illuminate\View\View
      */
     public function create()
     {
@@ -53,9 +48,6 @@ class ClienteController extends Controller
 
     /**
      * Almacena un nuevo cliente en la base de datos.
-     *
-     * @param ClienteRequest $request
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(ClienteRequest $request)
     {
@@ -66,9 +58,6 @@ class ClienteController extends Controller
 
     /**
      * Muestra los detalles de un cliente específico.
-     *
-     * @param Cliente $cliente
-     * @return \Illuminate\View\View
      */
     public function show(Cliente $cliente)
     {
@@ -77,9 +66,6 @@ class ClienteController extends Controller
 
     /**
      * Muestra el formulario para editar un cliente específico.
-     *
-     * @param Cliente $cliente
-     * @return \Illuminate\View\View
      */
     public function edit(Cliente $cliente)
     {
@@ -88,10 +74,6 @@ class ClienteController extends Controller
 
     /**
      * Actualiza un cliente en la base de datos.
-     *
-     * @param ClienteRequest $request
-     * @param Cliente $cliente
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(ClienteRequest $request, Cliente $cliente)
     {
@@ -102,9 +84,6 @@ class ClienteController extends Controller
 
     /**
      * Elimina un cliente de la base de datos.
-     *
-     * @param Cliente $cliente
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Cliente $cliente)
     {
