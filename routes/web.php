@@ -33,15 +33,45 @@ Route::get('/habitaciones/limpieza/agregarInsumos', action: [App\Http\Controller
 Route::post('/habitaciones/limpieza/agregarInsumos', action: [App\Http\Controllers\InsumosLimpiezaController::class, 'store'])->name('limpieza.agregarInsumos')->middleware('auth');
 
 //Tipo Habitación
-//      Listar
-Route::get('/habitaciones/tipohabitacion', [App\Http\Controllers\TipoHabitacionController::class, 'index'])->name('habitaciones.tipohabitacion.index')->middleware('auth');
-//      Crear
-Route::get('/habitaciones/tipohabitacion/create', [App\Http\Controllers\TipoHabitacionController::class, 'create'])->name('habitaciones.tipohabitacion.create')->middleware('auth');
-Route::post('/habitaciones/tipohabitacion', [App\Http\Controllers\TipoHabitacionController::class, 'store'])->name('habitaciones.tipohabitacion.store')->middleware('auth');
-//      Editar
-//      Vistar de Editar
-Route::get('/habitaciones/tipohabitacion/{habitacion}/edit', [App\Http\Controllers\TipoHabitacionController::class, 'edit'])->name('habitaciones.tipohabitacion.edit')->middleware('auth');
+// Listar todos los tipos de habitación y buscar
+Route::get('/habitaciones/tipohabitacion', [App\Http\Controllers\TipoHabitacionController::class, 'index'])
+    ->name('habitaciones.tipohabitacion.index')
+    ->middleware('auth');
 
+// Mostrar el formulario para crear un nuevo tipo de habitación
+Route::get('/habitaciones/tipohabitacion/create', [App\Http\Controllers\TipoHabitacionController::class, 'create'])
+    ->name('habitaciones.tipohabitacion.create')
+    ->middleware('auth');
+
+// Guardar el nuevo tipo de habitación
+Route::post('/habitaciones/tipohabitacion', [App\Http\Controllers\TipoHabitacionController::class, 'store'])
+    ->name('habitaciones.tipohabitacion.store')
+    ->middleware('auth');
+
+// Mostrar el formulario para editar un tipo de habitación existente
+Route::get('/habitaciones/tipohabitacion/{id}/edit', [App\Http\Controllers\TipoHabitacionController::class, 'edit'])
+    ->name('habitaciones.tipohabitacion.edit')
+    ->middleware('auth');
+
+// Actualizar un tipo de habitación existente
+Route::put('/habitaciones/tipohabitacion/{id}', [App\Http\Controllers\TipoHabitacionController::class, 'update'])
+    ->name('habitaciones.tipohabitacion.update')
+    ->middleware('auth');
+
+// Eliminar un tipo de habitación
+Route::delete('/habitaciones/tipohabitacion/{id}', [App\Http\Controllers\TipoHabitacionController::class, 'destroy'])
+    ->name('habitaciones.tipohabitacion.destroy')
+    ->middleware('auth');
+
+
+use App\Http\Controllers\HabitacionController;
+
+// Rutas para el controlador HabitacionController
+Route::resource('habitaciones', HabitacionController::class);
+    
+// Ruta adicional para búsqueda de habitaciones por detalle (ubicación y piso)
+Route::get('habitaciones/buscar', [HabitacionController::class, 'search'])->name('habitaciones.search');
+    
 
 //Reservas
 Route::get('/habitaciones/reservas', action: [App\Http\Controllers\AlquilerController::class, 'index'])->name('habitaciones.reservas.index')->middleware('auth');

@@ -1,89 +1,132 @@
 @extends('layouts.admin')
 @section('content')
-<div class="card card-primary">
-    <div class="box box-primary">
-
+    <div class="card card-primary">
         <div class="card-header">
-            <div class="d-flex justify-content-between align-items-center">
-                <h2 class="card-title">Administrar Tipos De Habitación</h2>
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool"
-                        data-card-widget="card-refresh"
-                        data-source="widgets.html"
-                        data-source-selector="#card-refresh-content">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
-                    <a href="{{ url('/habitaciones/tipohabitacion/create') }}" class="btn btn-tool btn-success">
-                        <i class="bi bi-plus"></i> Nuevo
-                    </a>
-                </div>
+            <h3 class="card-title">Listado de tipos de habitación</h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="card-refresh" data-source="widgets.html"
+                    data-source-selector="#card-refresh-content">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
             </div>
         </div>
 
-        <div class="card-header">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="card-tools">
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Buscar..."
-                            aria-label="Buscar..." aria-describedby="button-addon2">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button"
-                                id="button-addon2">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                    </div>                    
+        <div class="d-flex align-items-center justify-content-between" style="padding: 10px;">
+            <!-- Buscador -->
+            <form action="{{ route('habitaciones.tipohabitacion.index') }}" method="GET" class="d-flex">
+                <div class="input-group" style="width: 300px;">
+                    <input type="text" name="search" id="search" class="form-control"
+                        placeholder="Buscar por ID o Nombre" value="{{ request('search') }}">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </form>
+
+            <!-- Botón para crear nuevo tipo de habitación -->
+            <a href="{{ route('habitaciones.tipohabitacion.create') }}" class="btn btn-outline-dark"
+                style="margin-left: 10px;">
+                <i class="bi bi-plus-circle"></i> Nuevo Tipo de Habitación
+            </a>
         </div>
 
-        <div class="box-body-no-padding">
-            <table
-                class="table table-striped table-bordered table-hover dataTable">
-                <thead class="bg-blue">
+        <!-- Tabla de resultados -->
+        <div id="tableView">
+            <table class="table table-bordered">
+                <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Nombre Tipo Habitacion</th>
+                        <th>#</th>
+                        <th>Nombre</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($tiposHabitacion as $tipoHabitacion)
-                    <tr>
-                        <td>{{ $tipoHabitacion->idTipoHabitacion }}</td>
-                        <td>{{ $tipoHabitacion->tipoHabitacion }}</td>
-                        <td>
-                            <a href="{{ route('habitaciones/tipohabitacion/edit') }}"
-                                class="btn btn-sm btn-info"><i
-                                    class="fa fa-pencil"></i> Editar</a>
-                            <a class="btn btn-sm btn-danger"><i
-                                    class="fa fa-trash"></i> Eliminar</a>
-                        </td>
+                        <tr>
+                            <td>{{ $tipoHabitacion->idTipoHabitacion }}</td>
+                            <td>{{ $tipoHabitacion->tipoHabitacion }}</td>
+                            <td>
+                                
+                                <!-- Botón de Editar -->
+                                <a href="{{ route('habitaciones.tipohabitacion.edit', $tipoHabitacion->idTipoHabitacion) }}" class="btn btn-success">
+                                    <i class="bi bi-pencil-fill"></i> Editar
+                                </a>
 
-                    </tr>
+                                <!-- Botón de Eliminar -->
+                                <form action="{{ route('habitaciones.tipohabitacion.destroy', $tipoHabitacion->idTipoHabitacion) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar este tipo de habitación?');">
+                                        <i class="bi bi-trash-fill"></i> Eliminar
+                                    </button>
+                                </form>
+
+                                
+
+                            </td>
+
+                            <td>
+                                <!-- Botón de eliminación con mensaje personalizado -->
+                                <button class="btn btn-danger" onclick="confirmAction('{{ route('habitaciones.tipohabitacion.destroy', $tipoHabitacion->idTipoHabitacion) }}', 'POST', '¿Estás seguro de eliminar el tipo de habitación: {{ $tipoHabitacion->tipoHabitacion }}?', 'Eliminar')">
+                                    <i class="bi bi-trash-fill"></i> Eliminar
+                                </button>
+    
+                                <!-- Botón de edición -->
+                                <a href="{{ route('habitaciones.tipohabitacion.edit', $tipoHabitacion->idTipoHabitacion) }}" class="btn btn-success">
+                                    <i class="bi bi-pencil-fill"></i> Editar
+                                </a>
+                            </td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
-
-        <div class="box-footer">
-            <div class="row">
-                <div class="col-sm-3">
-                    Mostrando <span>1-10</span> de <span>100</span> registros
-                </div>
-                <div class="col-sm-9">
-                    <ul class="pagination pagination-sm no-margin pull-right">
-                        <li><a href="#">«</a></li>
-                        <li><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">3</a></li>
-                        <li><a href="#">»</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
     </div>
 
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteButtons = document.querySelectorAll('.delete-button');
+    
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const tipoHabitacionId = this.getAttribute('data-id');
+                    const tipoHabitacionName = this.getAttribute('data-name');
+    
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: `Estás a punto de eliminar el tipo de habitación: ${tipoHabitacionName}`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Crear un formulario temporal para enviar la solicitud DELETE
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = `/habitaciones/tipohabitacion/${tipoHabitacionId}`;
+    
+                            // Agregar los tokens de CSRF y método DELETE
+                            form.innerHTML = `
+                                @csrf
+                                @method('DELETE')
+                            `;
+    
+                            document.body.appendChild(form);
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+    
 
 @endsection
