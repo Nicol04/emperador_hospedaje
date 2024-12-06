@@ -11,11 +11,20 @@ use Illuminate\Support\Facades\Validator;
 class RegisterController extends Controller
 {
     use RegistersUsers;
-    //protected $redirectTo = '/home';
+  /**
+     * Middleware para permitir solo acceso de usuarios invitados (no autenticados).
+     */
     public function __construct()
     {
         $this->middleware('guest');
     }
+
+    /**
+     * Valida los datos del registro de usuario.
+     *
+     * @param array $data Datos proporcionados por el formulario de registro.
+     * @return \Illuminate\Contracts\Validation\Validator Validador configurado con las reglas.
+     */
     protected function validator(array $data)
     {
         return Validator::make($data, [
@@ -25,6 +34,12 @@ class RegisterController extends Controller
             'password' => ['required', 'string', 'min:8', 'max:8', 'regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/[0-9]/'],
         ]);
     }
+       /**
+     * Crea una nueva instancia de usuario tras el registro exitoso.
+     *
+     * @param array $data Datos validados proporcionados por el formulario de registro.
+     * @return \App\Models\Usuario El modelo de usuario creado.
+     */
     protected function create(array $data)
     {
         return Usuario::create([

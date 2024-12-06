@@ -7,20 +7,41 @@ use Illuminate\Http\Request;
 
 class InsumosLimpiezaController extends Controller
 {
+
+    /**
+     * Muestra un listado de insumos de limpieza con opción de filtro por categoría.
+     */
     public function index(Request $request)
     {
+        // Captura el ID de la categoría para aplicar el filtro, si está presente.
         $categoria_id = $request->input('categoria_id');
+        
+        // Consulta los insumos aplicando un filtro condicional por categoría y realiza la paginación.
         $insumos = InsumosLimpieza::when($categoria_id, function ($query, $categoria_id) {
             return $query->where('idcategoria', $categoria_id);
         })->paginate(10);
+        // Obtiene todas las categorías para mostrarlas como opciones de filtro.
         $categorias = Categorium::all();
+        
+        // Retorna la vista con los datos de insumos y categorías.
         return view('habitaciones.limpieza.insumos_limpieza', compact('insumos', 'categorias'));
     }
+
+    /**
+     * Muestra el formulario para crear un nuevo insumo de limpieza.
+     */
+    
     public function create()
     {
+        // Obtiene todas las categorías para asignarlas en el formulario.
         $categorias = Categorium::all();
         return view('habitaciones.limpieza.agregarInsumos', compact( 'categorias'));
     }
+
+    /**
+     * Almacena un nuevo insumo de limpieza en la base de datos.
+     */
+    
     public function store(Request $request)
     {
         // Validar los datos
@@ -32,6 +53,7 @@ class InsumosLimpiezaController extends Controller
             'unidadMedida' => 'required|string|in:Kilogramos,Litros,Unidades,Paquete',
             'stockMinimo' => 'required|integer|min:1',
         ], [
+            // Mensajes de error personalizados para mejorar la experiencia del usuario.
             'categoria_id.required' => 'La categoría es obligatoria.',
             'nombre.required' => 'El nombre del insumo de limpieza es obligatorio.',
             'descripcion.required' => 'La descripción es obligatoria.',
@@ -41,7 +63,7 @@ class InsumosLimpiezaController extends Controller
             'stockMinimo.required' => 'El stock mínimo es obligatorio.',
         ]);
 
-        // Guardar los datos en la base de datos
+        // Crea un nuevo insumo de limpieza con los datos validados.
         InsumosLimpieza::create([
             'idcategoria' => $request->input('categoria_id'),
             'nombre' => $request->input('nombre'),
@@ -51,22 +73,22 @@ class InsumosLimpiezaController extends Controller
             'stockMinimo' => $request->input('stockMinimo'),
         ]);
 
-        // Redireccionar o retornar una respuesta
+        // Redirecciona a la ruta específica con un mensaje de éxito.
         return redirect()->route('habitaciones.limpieza.agregarInsumos')
             ->with('mensaje', 'Insumo de limpieza creado exitosamente.')
             ->with('icono', 'success');
     }
 
     /**
-     * Display the specified resource.
+     * Muestra un recurso específico.
      */
     public function show(string $id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
+   /**
+     * Muestra el formulario para editar un recurso específico.
      */
     public function edit(string $id)
     {
@@ -74,7 +96,7 @@ class InsumosLimpiezaController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza un recurso específico en la base de datos.
      */
     public function update(Request $request, string $id)
     {
@@ -82,7 +104,7 @@ class InsumosLimpiezaController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina un recurso específico de la base de datos.
      */
     public function destroy(string $id)
     {
